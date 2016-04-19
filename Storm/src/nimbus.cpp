@@ -20,7 +20,7 @@ int main()
 
 	int** adj_matrix = dag_parser(no_nodes, no_edges);
 
-	cout<<"Hello test";
+	cout<<"Hello test lol";
 
 	/*for (int i = 0; i < no_nodes; i++)
 	{
