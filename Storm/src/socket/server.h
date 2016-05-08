@@ -11,7 +11,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
+#include <sstream>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -20,15 +21,30 @@
 
 using namespace std;
 
+void write_tofile(string str)
+{
+	ofstream outfile;
+	outfile.open("s_file.dat", ios::app);
+
+	// write inputted data into the file.
+	outfile << str << endl;
+
+	// close the opened file.
+	outfile.close();
+}
+
 void s_error(const char *msg)
 {
-    perror(msg);
+//    perror(msg);
+	cout<<msg;
     exit(1);
 }
 
 void *server_func(void *p_no)
 {
+	cout<<"server : thread started\n";
 	int argc = 2;
+
      int sockfd, newsockfd, portno;
      socklen_t clilen;
      char buffer[256];
@@ -42,7 +58,7 @@ void *server_func(void *p_no)
      // socket(int domain, int type, int protocol)
      sockfd =  socket(AF_INET, SOCK_STREAM, 0);
      int enable = 1;
-//     setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+     setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 
      if (sockfd < 0)
         s_error("ERROR opening socket");
@@ -69,6 +85,8 @@ void *server_func(void *p_no)
      if (bind(sockfd, (struct sockaddr *) &serv_addr,
               sizeof(serv_addr)) < 0)
               s_error("ERROR on binding");
+     else
+    	 cout<<"server : Socket bound\n";
 
      // This listen() call tells the socket to listen to the incoming connections.
      // The listen() function places all incoming connection into a backlog queue
@@ -90,18 +108,23 @@ void *server_func(void *p_no)
      if (newsockfd < 0)
           s_error("ERROR on accept");
 
-     printf("server: got connection from %s port %d\n",
-            inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port));
+     printf("server: got connection from %s port %d\n", inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port));
+     string ip_ad(inet_ntoa(cli_addr.sin_addr));
+     int prt = (intptr_t) ntohs(cli_addr.sin_port);
+     stringstream ss;
+     ss << prt;
+     string str = ss.str();
+     write_tofile("server: got connection from" + ip_ad + " port " + str + "\n");
 
 
      // This send() function sends the 13 bytes of the string to the new socket
-     send(newsockfd, "Hello, world!\n", 13, 0);
+     send(newsockfd, "Message Received\n", 2048, 0);
 
      bzero(buffer,256);
 
      n = read(newsockfd,buffer,255);
      if (n < 0) s_error("ERROR reading from socket");
-     printf("Here is the message: %s\n",buffer);
+     write_tofile(buffer);
 
      close(newsockfd);
      close(sockfd);

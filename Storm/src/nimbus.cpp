@@ -18,18 +18,14 @@ using namespace std;
 
 int main()
 {
-	int* values = config_parser();
+
+	/*int* values = config_parser();
 	int no_nodes = values[0];
 	int no_edges = values[1];
 
 	int** adj_matrix = dag_parser(no_nodes, no_edges);
 
-	int i;
-	cout<< "Hello";
-	cin>>i;
-	cout<<i;
-
-	int portno = 67838;
+	int portno = 55679;
 	int rc;
 	pthread_t threadID1, threadID2;
 
@@ -45,16 +41,6 @@ int main()
 	 exit(-1);
 	}
 
-//	server_func(portno);
-//	client_func(portno);
-
-	/*for (int i = 0; i < no_nodes; i++)
-	{
-		for (int j = 0; j < no_nodes; j++)
-		{
-			cout << adj_matrix[i][j];
-		}
-		cout<<endl;
-	}*/
+	pthread_join(threadID2, NULL);*/
 	return 0;
 }
